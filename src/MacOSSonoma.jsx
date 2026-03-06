@@ -1682,67 +1682,74 @@ const BOOT_CSS = `
 `;
 
 function BootScreen({ onDone }) {
+  const [started, setStarted] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
 
-  useEffect(() => {
-    // Play love-online music during boot, stop when done
+  const startBoot = () => {
+    if (started) return;
+    setStarted(true);
+
+    // Play music — works because triggered by user click
     const bootAudio = new Audio("/love-online_Hg3rA8YU.mp3");
-    bootAudio.volume = 0.6;
+    bootAudio.volume = 0.7;
     bootAudio.play().catch(()=>{});
 
-    // Play chime once
+    // Play chime
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const t0 = ctx.currentTime;
-      const notes = [[392,0],[523.3,0.06],[659.3,0.12],[783.9,0.18]];
-      notes.forEach(([freq, delay]) => {
+      [[392,0],[523.3,0.06],[659.3,0.12],[783.9,0.18]].forEach(([freq, delay]) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "sine";
         osc.frequency.value = freq;
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        gain.gain.setValueAtTime(0, t0 + delay);
-        gain.gain.linearRampToValueAtTime(0.25, t0 + delay + 0.07);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + delay + 2.0);
-        osc.start(t0 + delay);
-        osc.stop(t0 + delay + 2.1);
+        osc.connect(gain); gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(0, t0+delay);
+        gain.gain.linearRampToValueAtTime(0.25, t0+delay+0.07);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0+delay+2.0);
+        osc.start(t0+delay); osc.stop(t0+delay+2.1);
       });
       setTimeout(() => { try { ctx.close(); } catch(_){} }, 2500);
     } catch(_) {}
 
-    const t1 = setTimeout(() => setLeaving(true), 4000);
-    const t2 = setTimeout(() => {
-      bootAudio.pause();
-      bootAudio.currentTime = 0;
+    setTimeout(() => setLeaving(true), 4000);
+    setTimeout(() => {
+      bootAudio.pause(); bootAudio.currentTime = 0;
       doneRef.current();
     }, 4800);
-    return () => {
-      clearTimeout(t1); clearTimeout(t2);
-      bootAudio.pause();
-      bootAudio.currentTime = 0;
-    };
-  }, []); // empty array — runs ONCE only
+  };
 
   // Apple logo as inline SVG path (correct apple shape)
   return (
     <div className={`boot-screen${leaving ? " leaving" : ""}`}
+      onClick={!started ? startBoot : undefined}
       style={{ position:"fixed", inset:0, zIndex:999999,
         background:"#000", display:"flex", flexDirection:"column",
-        alignItems:"center", justifyContent:"center" }}>
+        alignItems:"center", justifyContent:"center",
+        cursor: started ? "default" : "pointer" }}>
       <style>{BOOT_CSS}</style>
 
-      <div className="boot-logo" style={{ marginBottom:56 }}>
+      {!started && (
+        <div style={{ position:"absolute", bottom:60, fontSize:12,
+          color:"rgba(255,255,255,0.35)", letterSpacing:"0.08em",
+          fontFamily:"-apple-system,sans-serif", textTransform:"uppercase" }}>
+          Click anywhere to start
+        </div>
+      )}
+
+      <div className={started ? "boot-logo" : ""} style={{ marginBottom:56 }}>
         <svg width="78" height="96" viewBox="0 0 56 68" fill="white" xmlns="http://www.w3.org/2000/svg">
           <path d="M44.97 36.29c-.07-7.19 5.87-10.66 6.14-10.83-3.35-4.9-8.55-5.57-10.4-5.65-4.42-.45-8.64 2.62-10.88 2.62-2.24 0-5.69-2.56-9.37-2.49-4.81.07-9.25 2.81-11.72 7.12-5.01 8.69-1.29 21.6 3.59 28.67 2.38 3.46 5.2 7.35 8.91 7.21 3.59-.14 4.94-2.32 9.28-2.32 4.34 0 5.55 2.32 9.33 2.24 3.84-.07 6.28-3.51 8.64-6.98 2.73-4.01 3.86-7.9 3.92-8.1-.09-.04-7.51-2.89-7.44-11.48zM37.82 13.37c1.98-2.4 3.32-5.73 2.96-9.07-2.86.12-6.32 1.91-8.37 4.31-1.84 2.13-3.45 5.55-3.01 8.82 3.19.25 6.44-1.63 8.42-4.06z"/>
         </svg>
       </div>
 
-      <div style={{ width:186, height:4, background:"rgba(255,255,255,0.12)", borderRadius:2, overflow:"hidden" }}>
-        <div className="boot-bar-fill" style={{ height:"100%", background:"rgba(255,255,255,0.8)", borderRadius:2, width:0 }}/>
-      </div>
+      {started && (
+        <div style={{ width:186, height:4, background:"rgba(255,255,255,0.12)", borderRadius:2, overflow:"hidden" }}>
+          <div className="boot-bar-fill" style={{ height:"100%", background:"rgba(255,255,255,0.8)", borderRadius:2, width:0 }}/>
+        </div>
+      )}
     </div>
   );
 }
