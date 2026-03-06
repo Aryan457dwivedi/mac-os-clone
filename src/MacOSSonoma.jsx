@@ -421,7 +421,7 @@ const TRACKS = [
 
 const musicState = {
   trackIdx: 0,
-  playing: false,
+  playing: true,
   progress: 0,
   vol: 0.68,
   liked: false,
@@ -437,6 +437,7 @@ function audioLoad(idx) {
   else { audioEl.pause(); audioEl.src = ""; }
 }
 audioLoad(0);
+audioEl.play().catch(()=>{});
 
 audioEl.addEventListener("timeupdate", () => {
   if (audioEl.duration) musicState.progress = audioEl.currentTime / audioEl.duration;
