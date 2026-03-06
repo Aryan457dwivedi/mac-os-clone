@@ -1668,8 +1668,82 @@ function FinderMenuDropdown({label, items, closing=false, onClose}) {
   );
 }
 
+
+/* ─── BOOT SCREEN ─────────────────────────────────────────────────────── */
+const BOOT_CSS = `
+  @keyframes boot-fade-in  { from { opacity:0 } to { opacity:1 } }
+  @keyframes boot-fade-out { from { opacity:1 } to { opacity:0 } }
+  @keyframes logo-pop { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.05);opacity:1} 100%{transform:scale(1);opacity:1} }
+  @keyframes bar-fill { from{width:0%} to{width:100%} }
+  .boot-screen { animation: boot-fade-in 0.6s ease forwards; }
+  .boot-screen.leaving { animation: boot-fade-out 0.8s ease forwards; }
+  .boot-logo { animation: logo-pop 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
+  .boot-bar-fill { animation: bar-fill 2.8s cubic-bezier(0.4,0,0.2,1) 1.2s both; }
+`;
+
+function BootScreen({ onDone }) {
+  const [leaving, setLeaving] = useState(false);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    // Synthesize Mac startup chime via Web Audio API
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const playNote = (freq, start, dur, gain=0.4) => {
+        const osc = ctx.createOscillator();
+        const env = ctx.createGain();
+        osc.connect(env); env.connect(ctx.destination);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+        env.gain.setValueAtTime(0, ctx.currentTime + start);
+        env.gain.linearRampToValueAtTime(gain, ctx.currentTime + start + 0.05);
+        env.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + dur + 0.1);
+      };
+      // Classic Mac chime chord: G major arpeggio
+      playNote(392.0, 0.0,  1.8, 0.35); // G4
+      playNote(493.9, 0.05, 1.8, 0.25); // B4
+      playNote(587.3, 0.1,  1.8, 0.25); // D5
+      playNote(783.9, 0.15, 2.0, 0.20); // G5
+    } catch(e) {}
+
+    // After progress bar completes, fade out
+    const t = setTimeout(() => {
+      setLeaving(true);
+      setTimeout(onDone, 800);
+    }, 4400);
+    return () => clearTimeout(t);
+  }, [onDone]);
+
+  return (
+    <div className={`boot-screen${leaving?" leaving":""}`}
+      style={{ position:"fixed", inset:0, zIndex:999999,
+        background:"#000", display:"flex", flexDirection:"column",
+        alignItems:"center", justifyContent:"center", gap:0 }}>
+      <style>{BOOT_CSS}</style>
+
+      {/* Apple logo */}
+      <div className="boot-logo" style={{ marginBottom:48 }}>
+        <svg width="80" height="96" viewBox="0 0 814 1000" fill="white">
+          <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663 0 541.8c0-207.8 135.4-317.7 268.4-317.7 70.5 0 129.2 46.4 173.1 46.4 42.1 0 108.5-49 190.5-49 30.7 0 111.4 2.6 170.1 82.8zm-198.6-72.5c-20.7 24.9-55.4 43.6-87.4 43.6-4.5 0-9-.6-13.5-1.3-1.3-3.8-1.9-7.7-1.9-12.2 0-32 16.9-68.1 42.2-92.4 24.9-24.3 65.8-42.2 100.1-42.2 3.2 0 6.4.6 9.6 1.3 1.3 4.5 1.9 9 1.9 12.8-.1 34-14.5 69.3-51 90.4z"/>
+        </svg>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{ width:200, height:4, background:"rgba(255,255,255,0.15)",
+        borderRadius:2, overflow:"hidden" }}>
+        <div className="boot-bar-fill"
+          style={{ height:"100%", background:"rgba(255,255,255,0.75)",
+            borderRadius:2, width:0 }}/>
+      </div>
+    </div>
+  );
+}
+
 /* ─── MAIN DESKTOP ───────────────────────────────────────────────────── */
 export default function MacOSSonoma() {
+  const [booted,setBooted]=useState(false);
   const [time,setTime]=useState(new Date());
   const [wallpaper,setWallpaper]=useState("/macos-tahoe-26-5120x2880-22675.jpg");
   const [wins,setWins]=useState([]);
@@ -1714,7 +1788,7 @@ export default function MacOSSonoma() {
   const addNotif=n=>{const id=++nid.current;setNotifs(p=>[...p,{...n,id}]);};
 
   const openApp=useCallback(app=>{
-    if(app.id==="github"){ window.open("https://github.com/Aryan457dwivedi","_blank"); return; }
+    if(app.id==="github"){ window.open("https://github.com/","_blank"); return; }
     if(["finder","safari","photos","facetime","maps"].includes(app.id)){ return; }
     setWins(prev=>{
       const ex=prev.find(w=>w.id===app.id);
