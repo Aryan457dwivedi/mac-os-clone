@@ -1824,6 +1824,8 @@ export default function MacOSSonoma() {
     setActiveMenu(label);
   };
 
+  if (!booted) return <BootScreen onDone={() => setBooted(true)} />;
+
   return (
     <>
       <style>{CSS}</style>
