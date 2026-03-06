@@ -1,5 +1,5 @@
 # macOS Sonoma Desktop Simulator
-https://mac-os-clone-hg67.vercel.app/
+https://mac-os-aryan.vercel.app/
 ## Quick Start
 
 ```bash
