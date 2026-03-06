@@ -409,13 +409,14 @@ const AppleLogo = () => (
 
 /* ─── GLOBAL TRACKS & MUSIC STATE ───────────────────────────────────── */
 const TRACKS = [
-  {title:"Blinding Lights",      artist:"The Weeknd",             dur:200, src:"/The Weeknd - Blinding Lights (Official Audio).mp3", art:"/21e8d6022d8d8740eebdf4f83253a5c6.jpg"},
-  {title:"Runaway",              artist:"Kanye West ft. Pusha T", dur:549, src:"/09 Runaway [Ft. Pusha T].mp3",                      art:"/ab67616d0000b273baf2a68126739ff553f2930a.jpeg"},
-  {title:"Aria (Extended Mix)",  artist:"Argy & Omnya",           dur:432, src:"/Argy & Omnya - Aria (Extended Mix).mp3",             art:"/0x1900-000000-80-0-0.jpg"},
-  {title:"Flight's Booked",      artist:"Drake",                  dur:198, src:"/Drake_-_Flight_s_Booked_(mp3.pm).mp3",               art:"/Honestly,_Nevermind_-_Drake.png"},
+  {title:"Love Online",          artist:"",                       dur:180, src:"/love-online_Hg3rA8YU.mp3",                           art:"/21e8d6022d8d8740eebdf4f83253a5c6.jpg"},
+  {title:"Blinding Lights",      artist:"The Weeknd",             dur:200, src:"/The Weeknd - Blinding Lights (Official Audio).mp3",   art:"/21e8d6022d8d8740eebdf4f83253a5c6.jpg"},
+  {title:"Runaway",              artist:"Kanye West ft. Pusha T", dur:549, src:"/09 Runaway [Ft. Pusha T].mp3",                        art:"/ab67616d0000b273baf2a68126739ff553f2930a.jpeg"},
+  {title:"Aria (Extended Mix)",  artist:"Argy & Omnya",           dur:432, src:"/Argy & Omnya - Aria (Extended Mix).mp3",               art:"/0x1900-000000-80-0-0.jpg"},
+  {title:"Flight's Booked",      artist:"Drake",                  dur:198, src:"/Drake_-_Flight_s_Booked_(mp3.pm).mp3",                 art:"/Honestly,_Nevermind_-_Drake.png"},
   {title:"Closing Night",        artist:"The Weeknd",             dur:224, src:"/The_Weeknd_-_Closing_Night_Bonus_tg_theweekndru_(mp3.pm).mp3", art:"/https___images.genius.com_742812e81e5a305a3439707184d2294b.750x750x1 - Copy.png"},
-  {title:"Is There Someone Else",artist:"The Weeknd",             dur:213, src:"/The_Weeknd_-_Is_there_someone_else_2023_(mp3.pm).mp3",          art:"/5934683e8944b8304e9c2920f914e846.1000x1000x1.png"},
-  {title:"I Feel It Coming",     artist:"The Weeknd",             dur:269, src:"/TheWeeknd_-_I_Feel_It_Coming_(mp3.pm).mp3",          art:"/ASSET_MMS_102788079.jpeg"},
+  {title:"Is There Someone Else",artist:"The Weeknd",             dur:213, src:"/The_Weeknd_-_Is_there_someone_else_2023_(mp3.pm).mp3",  art:"/5934683e8944b8304e9c2920f914e846.1000x1000x1.png"},
+  {title:"I Feel It Coming",     artist:"The Weeknd",             dur:269, src:"/TheWeeknd_-_I_Feel_It_Coming_(mp3.pm).mp3",             art:"/ASSET_MMS_102788079.jpeg"},
 ];
 
 const musicState = {
@@ -1724,9 +1725,9 @@ function BootScreen({ onDone }) {
       <style>{BOOT_CSS}</style>
 
       {/* Apple logo */}
-      <div className="boot-logo" style={{ marginBottom:48 }}>
-        <svg width="80" height="96" viewBox="0 0 814 1000" fill="white">
-          <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663 0 541.8c0-207.8 135.4-317.7 268.4-317.7 70.5 0 129.2 46.4 173.1 46.4 42.1 0 108.5-49 190.5-49 30.7 0 111.4 2.6 170.1 82.8zm-198.6-72.5c-20.7 24.9-55.4 43.6-87.4 43.6-4.5 0-9-.6-13.5-1.3-1.3-3.8-1.9-7.7-1.9-12.2 0-32 16.9-68.1 42.2-92.4 24.9-24.3 65.8-42.2 100.1-42.2 3.2 0 6.4.6 9.6 1.3 1.3 4.5 1.9 9 1.9 12.8-.1 34-14.5 69.3-51 90.4z"/>
+      <div className="boot-logo" style={{ marginBottom:52 }}>
+        <svg width="72" height="88" viewBox="0 0 170 209" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <path d="M130.3 0c.9 12.5-3.5 25-10.8 34.1-7.5 9.4-19.4 16.7-31.5 15.8-1.2-12.1 4.3-24.8 11.3-33.4C106.9 7 119.7.3 130.3 0zM170 144.5c-3.1 8.5-6.8 16.5-11.4 23.9-6 9.3-10.9 15.7-14.7 19.2-5.9 5.4-12.2 8.2-19 8.4-4.9 0-10.7-1.4-17.6-4.2-6.9-2.8-13.3-4.2-19.1-4.2-6.1 0-12.6 1.4-19.6 4.2-7 2.8-12.7 4.3-17.1 4.4-6.5.3-13-2.6-19.3-8.6-4.1-3.7-9.3-10.3-15.4-19.8C11.8 156.7 6 143.4 2.1 128.6c-4.1-15.5-6.1-30.6-6.1-45.2 0-16.8 3.6-31.3 10.9-43.3 5.7-9.7 13.3-17.3 22.9-23 9.6-5.6 19.9-8.5 31.1-8.7 6.1 0 14.1 1.9 24.1 5.6 9.9 3.7 16.3 5.6 19 5.6 2.1 0 9.1-2.2 21-6.6 11.3-4.1 20.8-5.8 28.6-5.2 21.2 1.7 37.1 10 47.6 25.1-18.9 11.5-28.3 27.6-28.1 48.2.2 16.1 6 29.4 17.5 39.9 5.2 4.9 11 8.7 17.5 11.5z"/>
         </svg>
       </div>
 
