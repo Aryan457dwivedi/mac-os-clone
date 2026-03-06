@@ -1693,26 +1693,10 @@ function BootScreen({ onDone }) {
 
     // Play music — works because triggered by user click
     const bootAudio = new Audio("/love-online_Hg3rA8YU.mp3");
-    bootAudio.volume = 0.7;
+    bootAudio.volume = 1.0;
     bootAudio.play().catch(()=>{});
 
-    // Play chime
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const t0 = ctx.currentTime;
-      [[392,0],[523.3,0.06],[659.3,0.12],[783.9,0.18]].forEach(([freq, delay]) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.value = freq;
-        osc.connect(gain); gain.connect(ctx.destination);
-        gain.gain.setValueAtTime(0, t0+delay);
-        gain.gain.linearRampToValueAtTime(0.25, t0+delay+0.07);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0+delay+2.0);
-        osc.start(t0+delay); osc.stop(t0+delay+2.1);
-      });
-      setTimeout(() => { try { ctx.close(); } catch(_){} }, 2500);
-    } catch(_) {}
+
 
     setTimeout(() => setLeaving(true), 4000);
     setTimeout(() => {
