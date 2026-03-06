@@ -1684,57 +1684,52 @@ const BOOT_CSS = `
 
 function BootScreen({ onDone }) {
   const [leaving, setLeaving] = useState(false);
-  const audioRef = useRef(null);
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
 
   useEffect(() => {
-    // Synthesize Mac startup chime via Web Audio API
+    // Play chime once
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const playNote = (freq, start, dur, gain=0.4) => {
+      const t0 = ctx.currentTime;
+      const notes = [[392,0],[523.3,0.06],[659.3,0.12],[783.9,0.18]];
+      notes.forEach(([freq, delay]) => {
         const osc = ctx.createOscillator();
-        const env = ctx.createGain();
-        osc.connect(env); env.connect(ctx.destination);
+        const gain = ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
-        env.gain.setValueAtTime(0, ctx.currentTime + start);
-        env.gain.linearRampToValueAtTime(gain, ctx.currentTime + start + 0.05);
-        env.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
-        osc.start(ctx.currentTime + start);
-        osc.stop(ctx.currentTime + start + dur + 0.1);
-      };
-      // Classic Mac chime chord: G major arpeggio
-      playNote(392.0, 0.0,  1.8, 0.35); // G4
-      playNote(493.9, 0.05, 1.8, 0.25); // B4
-      playNote(587.3, 0.1,  1.8, 0.25); // D5
-      playNote(783.9, 0.15, 2.0, 0.20); // G5
-    } catch(e) {}
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(0, t0 + delay);
+        gain.gain.linearRampToValueAtTime(0.25, t0 + delay + 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + delay + 2.0);
+        osc.start(t0 + delay);
+        osc.stop(t0 + delay + 2.1);
+      });
+      setTimeout(() => { try { ctx.close(); } catch(_){} }, 2500);
+    } catch(_) {}
 
-    // After progress bar completes, fade out
-    const t = setTimeout(() => {
-      setLeaving(true);
-      setTimeout(onDone, 800);
-    }, 4400);
-    return () => clearTimeout(t);
-  }, [onDone]);
+    const t1 = setTimeout(() => setLeaving(true), 4000);
+    const t2 = setTimeout(() => doneRef.current(), 4800);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []); // empty array — runs ONCE only
 
+  // Apple logo as inline SVG path (correct apple shape)
   return (
-    <div className={`boot-screen${leaving?" leaving":""}`}
+    <div className={`boot-screen${leaving ? " leaving" : ""}`}
       style={{ position:"fixed", inset:0, zIndex:999999,
         background:"#000", display:"flex", flexDirection:"column",
-        alignItems:"center", justifyContent:"center", gap:0 }}>
+        alignItems:"center", justifyContent:"center" }}>
       <style>{BOOT_CSS}</style>
 
-      {/* Apple logo — Unicode  rendered large */}
-      <div className="boot-logo" style={{ marginBottom:52, fontSize:88, lineHeight:1, color:"white", userSelect:"none" }}>
-        
+      <div className="boot-logo" style={{ marginBottom:56 }}>
+        <svg width="78" height="96" viewBox="0 0 56 68" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <path d="M44.97 36.29c-.07-7.19 5.87-10.66 6.14-10.83-3.35-4.9-8.55-5.57-10.4-5.65-4.42-.45-8.64 2.62-10.88 2.62-2.24 0-5.69-2.56-9.37-2.49-4.81.07-9.25 2.81-11.72 7.12-5.01 8.69-1.29 21.6 3.59 28.67 2.38 3.46 5.2 7.35 8.91 7.21 3.59-.14 4.94-2.32 9.28-2.32 4.34 0 5.55 2.32 9.33 2.24 3.84-.07 6.28-3.51 8.64-6.98 2.73-4.01 3.86-7.9 3.92-8.1-.09-.04-7.51-2.89-7.44-11.48zM37.82 13.37c1.98-2.4 3.32-5.73 2.96-9.07-2.86.12-6.32 1.91-8.37 4.31-1.84 2.13-3.45 5.55-3.01 8.82 3.19.25 6.44-1.63 8.42-4.06z"/>
+        </svg>
       </div>
 
-      {/* Progress bar */}
-      <div style={{ width:200, height:4, background:"rgba(255,255,255,0.15)",
-        borderRadius:2, overflow:"hidden" }}>
-        <div className="boot-bar-fill"
-          style={{ height:"100%", background:"rgba(255,255,255,0.75)",
-            borderRadius:2, width:0 }}/>
+      <div style={{ width:186, height:4, background:"rgba(255,255,255,0.12)", borderRadius:2, overflow:"hidden" }}>
+        <div className="boot-bar-fill" style={{ height:"100%", background:"rgba(255,255,255,0.8)", borderRadius:2, width:0 }}/>
       </div>
     </div>
   );
