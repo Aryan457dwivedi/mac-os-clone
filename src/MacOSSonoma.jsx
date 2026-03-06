@@ -1685,14 +1685,40 @@ function FinderMenuDropdown({label, items, closing=false, onClose}) {
 
 /* ─── BOOT SCREEN ─────────────────────────────────────────────────────── */
 const BOOT_CSS = `
-  @keyframes boot-fade-in  { from { opacity:0 } to { opacity:1 } }
-  @keyframes boot-fade-out { from { opacity:1 } to { opacity:0 } }
-  @keyframes logo-pop { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.05);opacity:1} 100%{transform:scale(1);opacity:1} }
+  @keyframes boot-fade-in  { from{opacity:0} to{opacity:1} }
+  @keyframes boot-fade-out { from{opacity:1} to{opacity:0} }
+  @keyframes logo-pop { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.08);opacity:1} 100%{transform:scale(1);opacity:1} }
   @keyframes bar-fill { from{width:0%} to{width:100%} }
+  @keyframes apple-pulse { 0%,100%{filter:drop-shadow(0 0 8px rgba(255,255,255,0.2))} 50%{filter:drop-shadow(0 0 24px rgba(255,255,255,0.55))} }
   .boot-screen { animation: boot-fade-in 0.6s ease forwards; }
   .boot-screen.leaving { animation: boot-fade-out 0.8s ease forwards; }
   .boot-logo { animation: logo-pop 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
   .boot-bar-fill { animation: bar-fill 2.8s cubic-bezier(0.4,0,0.2,1) 1.2s both; }
+  .apple-btn {
+    background: none; border: none; cursor: pointer; padding: 0;
+    outline: none; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), filter 0.25s ease;
+    filter: drop-shadow(0 0 0px rgba(255,255,255,0));
+    animation: apple-pulse 3s ease-in-out infinite;
+  }
+  .apple-btn:hover {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 28px rgba(255,255,255,0.7)) brightness(1.1);
+    animation: none;
+  }
+  .apple-btn:active {
+    transform: scale(0.95);
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.4));
+  }
+  .boot-hint {
+    margin-top: 18px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.28);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: -apple-system, sans-serif;
+    transition: opacity 0.3s ease;
+  }
 `;
 
 function BootScreen({ onDone }) {
@@ -1723,33 +1749,33 @@ function BootScreen({ onDone }) {
     }, 4800);
   };
 
-  // Apple logo as inline SVG path (correct apple shape)
   return (
     <div className={`boot-screen${leaving ? " leaving" : ""}`}
-      onClick={!started ? startBoot : undefined}
       style={{ position:"fixed", inset:0, zIndex:999999,
         background:"#000", display:"flex", flexDirection:"column",
-        alignItems:"center", justifyContent:"center",
-        cursor: started ? "default" : "pointer" }}>
+        alignItems:"center", justifyContent:"center" }}>
       <style>{BOOT_CSS}</style>
 
-      {!started && (
-        <div style={{ position:"absolute", bottom:60, fontSize:12,
-          color:"rgba(255,255,255,0.35)", letterSpacing:"0.08em",
-          fontFamily:"-apple-system,sans-serif", textTransform:"uppercase" }}>
-          Click anywhere to start
+      {!started ? (
+        /* Click-to-start: Apple logo as button */
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
+          <button className="apple-btn" onClick={startBoot}>
+            <svg width="90" height="110" viewBox="0 0 56 68" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path d="M44.97 36.29c-.07-7.19 5.87-10.66 6.14-10.83-3.35-4.9-8.55-5.57-10.4-5.65-4.42-.45-8.64 2.62-10.88 2.62-2.24 0-5.69-2.56-9.37-2.49-4.81.07-9.25 2.81-11.72 7.12-5.01 8.69-1.29 21.6 3.59 28.67 2.38 3.46 5.2 7.35 8.91 7.21 3.59-.14 4.94-2.32 9.28-2.32 4.34 0 5.55 2.32 9.33 2.24 3.84-.07 6.28-3.51 8.64-6.98 2.73-4.01 3.86-7.9 3.92-8.1-.09-.04-7.51-2.89-7.44-11.48zM37.82 13.37c1.98-2.4 3.32-5.73 2.96-9.07-2.86.12-6.32 1.91-8.37 4.31-1.84 2.13-3.45 5.55-3.01 8.82 3.19.25 6.44-1.63 8.42-4.06z"/>
+            </svg>
+          </button>
         </div>
-      )}
-
-      <div className={started ? "boot-logo" : ""} style={{ marginBottom:56 }}>
-        <svg width="78" height="96" viewBox="0 0 56 68" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <path d="M44.97 36.29c-.07-7.19 5.87-10.66 6.14-10.83-3.35-4.9-8.55-5.57-10.4-5.65-4.42-.45-8.64 2.62-10.88 2.62-2.24 0-5.69-2.56-9.37-2.49-4.81.07-9.25 2.81-11.72 7.12-5.01 8.69-1.29 21.6 3.59 28.67 2.38 3.46 5.2 7.35 8.91 7.21 3.59-.14 4.94-2.32 9.28-2.32 4.34 0 5.55 2.32 9.33 2.24 3.84-.07 6.28-3.51 8.64-6.98 2.73-4.01 3.86-7.9 3.92-8.1-.09-.04-7.51-2.89-7.44-11.48zM37.82 13.37c1.98-2.4 3.32-5.73 2.96-9.07-2.86.12-6.32 1.91-8.37 4.31-1.84 2.13-3.45 5.55-3.01 8.82 3.19.25 6.44-1.63 8.42-4.06z"/>
-        </svg>
-      </div>
-
-      {started && (
-        <div style={{ width:186, height:4, background:"rgba(255,255,255,0.12)", borderRadius:2, overflow:"hidden" }}>
-          <div className="boot-bar-fill" style={{ height:"100%", background:"rgba(255,255,255,0.8)", borderRadius:2, width:0 }}/>
+      ) : (
+        /* Boot in progress: logo + progress bar */
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
+          <div className="boot-logo" style={{ marginBottom:56 }}>
+            <svg width="78" height="96" viewBox="0 0 56 68" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path d="M44.97 36.29c-.07-7.19 5.87-10.66 6.14-10.83-3.35-4.9-8.55-5.57-10.4-5.65-4.42-.45-8.64 2.62-10.88 2.62-2.24 0-5.69-2.56-9.37-2.49-4.81.07-9.25 2.81-11.72 7.12-5.01 8.69-1.29 21.6 3.59 28.67 2.38 3.46 5.2 7.35 8.91 7.21 3.59-.14 4.94-2.32 9.28-2.32 4.34 0 5.55 2.32 9.33 2.24 3.84-.07 6.28-3.51 8.64-6.98 2.73-4.01 3.86-7.9 3.92-8.1-.09-.04-7.51-2.89-7.44-11.48zM37.82 13.37c1.98-2.4 3.32-5.73 2.96-9.07-2.86.12-6.32 1.91-8.37 4.31-1.84 2.13-3.45 5.55-3.01 8.82 3.19.25 6.44-1.63 8.42-4.06z"/>
+            </svg>
+          </div>
+          <div style={{ width:186, height:4, background:"rgba(255,255,255,0.12)", borderRadius:2, overflow:"hidden" }}>
+            <div className="boot-bar-fill" style={{ height:"100%", background:"rgba(255,255,255,0.8)", borderRadius:2, width:0 }}/>
+          </div>
         </div>
       )}
     </div>
