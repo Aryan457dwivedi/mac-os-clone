@@ -1,4 +1,4 @@
-# macOS Sonoma Desktop Simulator
+# macOS Sonoma Web Simulator
 https://mac-os-aryan.vercel.app/
 ## Quick Start
 
