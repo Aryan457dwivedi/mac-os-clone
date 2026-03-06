@@ -101,7 +101,7 @@ function SonomaWallpaper({ src }) {
         height: "100%",
         objectFit: "cover",
         objectPosition: "center",
-        transition: "opacity 0.4s ease",
+        transition: "opacity 0.6s ease",
       }}
     />
   );
@@ -977,6 +977,20 @@ function MusicApp() {
 
 /* ─── CALENDAR APP — imported from CalendarApp.jsx ──────────────────────── */
 
+// Preload all wallpapers on app load
+if (typeof window !== "undefined") {
+  const toPreload = [
+    "/macos-tahoe-26-5120x2880-22675.jpg",
+    "/macos-catalina-mountains-island-night-stock-5k-6016x6016-189.jpg",
+    "/macos-mojave-sand-dunes-mojave-desert-california-night-dark-5120x2880-4051.jpg",
+    "/apple-macbook-pro-stock-2021-apple-event-2021-dark-mode-6016x5468-6759.jpg",
+    "/macos-big-sur-apple-layers-fluidic-colorful-wwdc-stock-4096x2304-1455.jpg",
+    "/macbook-pro-colorful-apple-stock-2560x1600-1391.png",
+    "/Mac-OS-Wallpaper-4K-HD-Free-download.png",
+  ];
+  toPreload.forEach(src => { const i = new Image(); i.src = src; });
+}
+
 const WALLPAPERS = [
   { name:"macOS Tahoe",   src:"/macos-tahoe-26-5120x2880-22675.jpg" },
   { name:"Catalina Night",src:"/macos-catalina-mountains-island-night-stock-5k-6016x6016-189.jpg" },
@@ -1690,6 +1704,10 @@ function BootScreen({ onDone }) {
   const startBoot = () => {
     if (started) return;
     setStarted(true);
+
+    // Preload wallpaper so it's ready when desktop appears
+    const img = new Image();
+    img.src = "/macos-tahoe-26-5120x2880-22675.jpg";
 
     // Play music — works because triggered by user click
     const bootAudio = new Audio("/love-online_Hg3rA8YU.mp3");
