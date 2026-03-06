@@ -409,7 +409,6 @@ const AppleLogo = () => (
 
 /* ─── GLOBAL TRACKS & MUSIC STATE ───────────────────────────────────── */
 const TRACKS = [
-  {title:"Love Online",          artist:"",                       dur:180, src:"/love-online_Hg3rA8YU.mp3",                           art:"/21e8d6022d8d8740eebdf4f83253a5c6.jpg"},
   {title:"Blinding Lights",      artist:"The Weeknd",             dur:200, src:"/The Weeknd - Blinding Lights (Official Audio).mp3",   art:"/21e8d6022d8d8740eebdf4f83253a5c6.jpg"},
   {title:"Runaway",              artist:"Kanye West ft. Pusha T", dur:549, src:"/09 Runaway [Ft. Pusha T].mp3",                        art:"/ab67616d0000b273baf2a68126739ff553f2930a.jpeg"},
   {title:"Aria (Extended Mix)",  artist:"Argy & Omnya",           dur:432, src:"/Argy & Omnya - Aria (Extended Mix).mp3",               art:"/0x1900-000000-80-0-0.jpg"},
@@ -421,7 +420,7 @@ const TRACKS = [
 
 const musicState = {
   trackIdx: 0,
-  playing: true,
+  playing: false,
   progress: 0,
   vol: 0.68,
   liked: false,
@@ -437,7 +436,6 @@ function audioLoad(idx) {
   else { audioEl.pause(); audioEl.src = ""; }
 }
 audioLoad(0);
-audioEl.play().catch(()=>{});
 
 audioEl.addEventListener("timeupdate", () => {
   if (audioEl.duration) musicState.progress = audioEl.currentTime / audioEl.duration;
@@ -1689,6 +1687,11 @@ function BootScreen({ onDone }) {
   doneRef.current = onDone;
 
   useEffect(() => {
+    // Play love-online music during boot, stop when done
+    const bootAudio = new Audio("/love-online_Hg3rA8YU.mp3");
+    bootAudio.volume = 0.6;
+    bootAudio.play().catch(()=>{});
+
     // Play chime once
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1711,8 +1714,16 @@ function BootScreen({ onDone }) {
     } catch(_) {}
 
     const t1 = setTimeout(() => setLeaving(true), 4000);
-    const t2 = setTimeout(() => doneRef.current(), 4800);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t2 = setTimeout(() => {
+      bootAudio.pause();
+      bootAudio.currentTime = 0;
+      doneRef.current();
+    }, 4800);
+    return () => {
+      clearTimeout(t1); clearTimeout(t2);
+      bootAudio.pause();
+      bootAudio.currentTime = 0;
+    };
   }, []); // empty array — runs ONCE only
 
   // Apple logo as inline SVG path (correct apple shape)
