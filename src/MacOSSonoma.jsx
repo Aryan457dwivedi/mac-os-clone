@@ -1829,7 +1829,7 @@ export default function MacOSSonoma() {
   const addNotif=n=>{const id=++nid.current;setNotifs(p=>[...p,{...n,id}]);};
 
   const openApp=useCallback(app=>{
-    if(app.id==="github"){ window.open("https://github.com/","_blank"); return; }
+    if(app.id==="github"){ window.open("https://github.com/Aryan457dwivedi","_blank"); return; }
     if(["finder","safari","photos","facetime","maps"].includes(app.id)){ return; }
     setWins(prev=>{
       const ex=prev.find(w=>w.id===app.id);
