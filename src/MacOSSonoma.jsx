@@ -992,13 +992,13 @@ if (typeof window !== "undefined") {
 }
 
 const WALLPAPERS = [
-  { name:"macOS Tahoe",   src:"/macos-tahoe-26-5120x2880-22675.jpg" },
-  { name:"Catalina Night",src:"/macos-catalina-mountains-island-night-stock-5k-6016x6016-189.jpg" },
-  { name:"Mojave Night",  src:"/macos-mojave-sand-dunes-mojave-desert-california-night-dark-5120x2880-4051.jpg" },
-  { name:"MacBook Pro",   src:"/apple-macbook-pro-stock-2021-apple-event-2021-dark-mode-6016x5468-6759.jpg" },
+  { name:"Tahoe",   src:"/macos-tahoe-26-5120x2880-22675.jpg" },
+  { name:"Catalina",src:"/macos-catalina-mountains-island-night-stock-5k-6016x6016-189.jpg" },
+  { name:"Mojave",  src:"/macos-mojave-sand-dunes-mojave-desert-california-night-dark-5120x2880-4051.jpg" },
+  { name:"Pro",   src:"/apple-macbook-pro-stock-2021-apple-event-2021-dark-mode-6016x5468-6759.jpg" },
   { name:"Big Sur",       src:"/macos-big-sur-apple-layers-fluidic-colorful-wwdc-stock-4096x2304-1455.jpg" },
-  { name:"Colorful",      src:"/macbook-pro-colorful-apple-stock-2560x1600-1391.png" },
-  { name:"macOS 4K",      src:"/Mac-OS-Wallpaper-4K-HD-Free-download.png" },
+  { name:"Initial",      src:"/macbook-pro-colorful-apple-stock-2560x1600-1391.png" },
+  { name:"OS-4K",      src:"/Mac-OS-Wallpaper-4K-HD-Free-download.png" },
 ];
 
 function SettingsApp({ setWallpaper, wallpaper }) {
@@ -1786,7 +1786,7 @@ function BootScreen({ onDone }) {
 export default function MacOSSonoma() {
   const [booted,setBooted]=useState(false);
   const [time,setTime]=useState(new Date());
-  const [wallpaper,setWallpaper]=useState("/macos-tahoe-26-5120x2880-22675.jpg");
+  const [wallpaper,setWallpaper]=useState("/apple-macbook-pro-stock-2021-apple-event-2021-dark-mode-6016x5468-6759.jpg");
   const [wins,setWins]=useState([]);
   const [zt,setZt]=useState(200);
   const [spotlight,setSpotlight]=useState(false);
